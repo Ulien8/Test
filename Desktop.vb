@@ -1,84 +1,82 @@
-﻿Imports System.Threading
+Imports System.Threading
 Imports System.Collections
 Imports System.Diagnostics
 Imports System.Runtime.InteropServices
 Imports System.Collections.Specialized
 
-''' <summary>
-''' Encapsulates the Desktop API.
-''' </summary>
 Public Class Desktop
+
     Implements IDisposable
     Implements ICloneable
 #Region "Imports"
-    <DllImport("kernel32.dll")>
-    Private Shared Function GetThreadId(thread As IntPtr) As Integer
+    <DllImport("kernel32.dll")> _
+    Private Shared Function GetThreadId(ByVal thread As IntPtr) As Integer
     End Function
 
-    <DllImport("kernel32.dll")>
-    Private Shared Function GetProcessId(process As IntPtr) As Integer
+    <DllImport("kernel32.dll")> _
+    Private Shared Function GetProcessId(ByVal process As IntPtr) As Integer
     End Function
 
     '
     ' Imported winAPI functions.
     '
-    <DllImport("user32.dll")>
-    Private Shared Function CreateDesktop(lpszDesktop As String, lpszDevice As IntPtr, pDevmode As IntPtr, dwFlags As Integer, dwDesiredAccess As Long, lpsa As IntPtr) As IntPtr
+    <DllImport("user32.dll")> _
+    Private Shared Function CreateDesktop(ByVal lpszDesktop As String, ByVal lpszDevice As IntPtr, ByVal pDevmode As IntPtr, ByVal dwFlags As Integer, ByVal dwDesiredAccess As Integer, ByVal lpsa As IntPtr) As IntPtr
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function CloseDesktop(hDesktop As IntPtr) As Boolean
+    <DllImport("user32.dll", SetLastError:=True)> _
+    Private Shared Function CloseDesktop(ByVal hDesktop As IntPtr) As Boolean
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function OpenDesktop(lpszDesktop As String, dwFlags As Integer, fInherit As Boolean, dwDesiredAccess As Long) As IntPtr
+    <DllImport("user32.dll")> _
+    Private Shared Function OpenDesktop(ByVal lpszDesktop As String, ByVal dwFlags As Integer, ByVal fInherit As Boolean, ByVal dwDesiredAccess As Integer) As IntPtr
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function OpenInputDesktop(dwFlags As Integer, fInherit As Boolean, dwDesiredAccess As Long) As IntPtr
+    <DllImport("user32.dll")> _
+    Private Shared Function OpenInputDesktop(ByVal dwFlags As Integer, ByVal fInherit As Boolean, ByVal dwDesiredAccess As Integer) As IntPtr
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function SwitchDesktop(hDesktop As IntPtr) As Boolean
+    <DllImport("user32.dll")> _
+    Private Shared Function SwitchDesktop(ByVal hDesktop As IntPtr) As Boolean
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function EnumDesktops(hwinsta As IntPtr, lpEnumFunc As EnumDesktopProc, lParam As IntPtr) As Boolean
+    <DllImport("user32.dll")> _
+    Private Shared Function EnumDesktops(ByVal hwinsta As IntPtr, ByVal lpEnumFunc As EnumDesktopProc, ByVal lParam As IntPtr) As Boolean
     End Function
 
-    <DllImport("user32.dll")>
+    <DllImport("user32.dll")> _
     Private Shared Function GetProcessWindowStation() As IntPtr
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function EnumDesktopWindows(hDesktop As IntPtr, lpfn As EnumDesktopWindowsProc, lParam As IntPtr) As Boolean
+    <DllImport("user32.dll")> _
+    Private Shared Function EnumDesktopWindows(ByVal hDesktop As IntPtr, ByVal lpfn As EnumDesktopWindowsProc, ByVal lParam As IntPtr) As Boolean
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function SetThreadDesktop(hDesktop As IntPtr) As Boolean
+    <DllImport("user32.dll")> _
+    Private Shared Function SetThreadDesktop(ByVal hDesktop As IntPtr) As Boolean
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function GetThreadDesktop(dwThreadId As Integer) As IntPtr
+    <DllImport("user32.dll")> _
+    Private Shared Function GetThreadDesktop(ByVal dwThreadId As Integer) As IntPtr
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function GetUserObjectInformation(hObj As IntPtr, nIndex As Integer, pvInfo As IntPtr, nLength As Integer, ByRef lpnLengthNeeded As Integer) As Boolean
+    <DllImport("user32.dll")> _
+    Private Shared Function GetUserObjectInformation(ByVal hObj As IntPtr, ByVal nIndex As Integer, ByVal pvInfo As IntPtr, ByVal nLength As Integer, ByRef lpnLengthNeeded As Integer) As Boolean
     End Function
 
-    <DllImport("kernel32.dll")>
-    Private Shared Function CreateProcess(lpApplicationName As String, lpCommandLine As String, lpProcessAttributes As IntPtr, lpThreadAttributes As IntPtr, bInheritHandles As Boolean, dwCreationFlags As Integer,
-            lpEnvironment As IntPtr, lpCurrentDirectory As String, ByRef lpStartupInfo As STARTUPINFO, ByRef lpProcessInformation As PROCESS_INFORMATION) As Boolean
+    <DllImport("kernel32.dll")> _
+    Private Shared Function CreateProcess(ByVal lpApplicationName As String, ByVal lpCommandLine As String, ByVal lpProcessAttributes As IntPtr, ByVal lpThreadAttributes As IntPtr, ByVal bInheritHandles As Boolean, ByVal dwCreationFlags As Integer, _
+   ByVal lpEnvironment As IntPtr, ByVal lpCurrentDirectory As String, ByRef lpStartupInfo As STARTUPINFO, ByRef lpProcessInformation As PROCESS_INFORMATION) As Boolean
     End Function
 
-    <DllImport("user32.dll")>
-    Private Shared Function GetWindowText(hWnd As IntPtr, lpString As IntPtr, nMaxCount As Integer) As Integer
+    <DllImport("user32.dll")> _
+    Private Shared Function GetWindowText(ByVal hWnd As IntPtr, ByVal lpString As IntPtr, ByVal nMaxCount As Integer) As Integer
     End Function
 
-    Private Delegate Function EnumDesktopProc(lpszDesktop As String, lParam As IntPtr) As Boolean
-    Private Delegate Function EnumDesktopWindowsProc(desktopHandle As IntPtr, lParam As IntPtr) As Boolean
+    Private Delegate Function EnumDesktopProc(ByVal lpszDesktop As String, ByVal lParam As IntPtr) As Boolean
+    Private Delegate Function EnumDesktopWindowsProc(ByVal desktopHandle As IntPtr, ByVal lParam As IntPtr) As Boolean
 
-    <StructLayout(LayoutKind.Sequential)>
+    <StructLayout(LayoutKind.Sequential)> _
     Private Structure PROCESS_INFORMATION
         Public hProcess As IntPtr
         Public hThread As IntPtr
@@ -86,7 +84,7 @@ Public Class Desktop
         Public dwThreadId As Integer
     End Structure
 
-    <StructLayout(LayoutKind.Sequential)>
+    <StructLayout(LayoutKind.Sequential)> _
     Private Structure STARTUPINFO
         Public cb As Integer
         Public lpReserved As String
@@ -139,9 +137,10 @@ Public Class Desktop
 
 #Region "Structures"
     ''' <summary>
-    ''' Stores window handles and titles.
+    ''' ウィンドウのハンドルとタイトルを格納します。
     ''' </summary>
     Public Structure Window
+
 #Region "Private Variables"
         Private m_handle As IntPtr
         Private m_text As String
@@ -173,7 +172,7 @@ Public Class Desktop
         ''' </summary>
         ''' <param name="handle">Window handle.</param>
         ''' <param name="text">Window title.</param>
-        Public Sub New(handle As IntPtr, text As String)
+        Public Sub New(ByVal handle As IntPtr, ByVal text As String)
             m_handle = handle
             m_text = text
         End Sub
@@ -181,7 +180,7 @@ Public Class Desktop
     End Structure
 
     ''' <summary>
-    ''' A collection for Window objects.
+    ''' ウィンドウオブジェクトのコレクション。
     ''' </summary>
     Public Class WindowCollection
         Inherits CollectionBase
@@ -189,7 +188,7 @@ Public Class Desktop
         ''' <summary>
         ''' Gets a window from teh collection.
         ''' </summary>
-        Default Public ReadOnly Property Item(index As Integer) As Window
+        Default Public ReadOnly Property Item(ByVal index As Integer) As Window
             Get
                 Return CType(List(index), Window)
             End Get
@@ -201,7 +200,7 @@ Public Class Desktop
         ''' Adds a window to the collection.
         ''' </summary>
         ''' <param name="wnd">Window to add.</param>
-        Public Sub Add(wnd As Window)
+        Public Sub Add(ByVal wnd As Window)
             ' adds a widow to the collection.
             List.Add(wnd)
         End Sub
@@ -215,11 +214,13 @@ Public Class Desktop
     Private Shared m_sc As StringCollection
     Private m_windows As ArrayList
     Private m_disposed As Boolean
+    ' かいぞう
+    Private _proc As List(Of Process)
 #End Region
 
 #Region "Public Properties"
     ''' <summary>
-    ''' Gets if a desktop is open.
+    ''' デスクトップが開かれているかどうかの判定値を返します。
     ''' </summary>
     Public ReadOnly Property IsOpen() As Boolean
         Get
@@ -228,7 +229,7 @@ Public Class Desktop
     End Property
 
     ''' <summary>
-    ''' Gets the name of the desktop, returns null if no desktop is open.
+    ''' デスクトップの名前を取得します。（存在しない時はNULL）
     ''' </summary>
     Public ReadOnly Property DesktopName() As String
         Get
@@ -237,7 +238,7 @@ Public Class Desktop
     End Property
 
     ''' <summary>
-    ''' Gets a handle to the desktop, IntPtr.Zero if no desktop open.
+    ''' デスクトップのハンドルを取得します。（デスクトップが開かれていない時はIntPtr.Zero）
     ''' </summary>
     Public ReadOnly Property DesktopHandle() As IntPtr
         Get
@@ -246,19 +247,29 @@ Public Class Desktop
     End Property
 
     ''' <summary>
-    ''' Opens the default desktop.
+    ''' デフォルトでメインになっているデスクトップを開きます。
     ''' </summary>
     Public Shared ReadOnly [Default] As Desktop = Desktop.OpenDefaultDesktop()
 
     ''' <summary>
-    ''' Opens the desktop the user if viewing.
+    ''' ユーザが見ているデスクトップを返します。
     ''' </summary>
     Public Shared ReadOnly Input As Desktop = Desktop.OpenInputDesktop()
+
+    ''' <summary>
+    ''' 改造　起動したプロセスを取得します
+    ''' </summary>
+    Public ReadOnly Property ProcessList() As List(Of Process)
+        Get
+            Return _proc
+        End Get
+    End Property
+
 #End Region
 
 #Region "Construction/Destruction"
     ''' <summary>
-    ''' Creates a new Desktop object.
+    ''' 新しいDesktopオブジェクトを作成します。
     ''' </summary>
     Public Sub New()
         ' init variables.
@@ -266,15 +277,19 @@ Public Class Desktop
         m_desktopName = [String].Empty
         m_windows = New ArrayList()
         m_disposed = False
+        ' 改造
+        _proc = New List(Of Process)
     End Sub
 
     ' constructor is private to prevent invalid handles being passed to it.
-    Private Sub New(desktop__1 As IntPtr)
+    Private Sub New(ByVal desktop__1 As IntPtr)
         ' init variables.
         m_desktop = desktop__1
         m_desktopName = Desktop.GetDesktopName(desktop__1)
         m_windows = New ArrayList()
         m_disposed = False
+        ' 改造
+        _proc = New List(Of Process)
     End Sub
 
     Protected Overrides Sub Finalize()
@@ -289,11 +304,11 @@ Public Class Desktop
 
 #Region "Methods"
     ''' <summary>
-    ''' Creates a new desktop.  If a handle is open, it will be closed.
+    ''' 新しいデスクトップを作成します。ハンドルが開かれているときはそれを閉じます。
     ''' </summary>
-    ''' <param name="name">The name of the new desktop.  Must be unique, and is case sensitive.</param>
-    ''' <returns>True if desktop was successfully created, otherwise false.</returns>
-    Public Function Create(name As String) As Boolean
+    ''' <param name="name">新しいデスクトップの名前。一意なもので大文字と小文字は区別されます。</param>
+    ''' <returns>デスクトップの作成に成功した時はTrueを返します。それ以外の場合はFalseを返します。</returns>
+    Public Function Create(ByVal name As String) As Boolean
         ' make sure object isnt disposed.
         CheckDisposed()
 
@@ -306,7 +321,7 @@ Public Class Desktop
         End If
 
         ' make sure desktop doesnt already exist.
-        If Desktop.Exists(name) Then
+        If desktop.Exists(name) Then
             ' it exists, so open it.
             Return Open(name)
         End If
@@ -325,9 +340,9 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Closes the handle to a desktop.
+    ''' デスクトップのハンドルを閉じます。
     ''' </summary>
-    ''' <returns>True if an open handle was successfully closed.</returns>
+    ''' <returns>開いているハンドルを閉じるのに成功した時にTrueを返します。</returns>
     Public Function Close() As Boolean
         ' make sure object isnt disposed.
         CheckDisposed()
@@ -351,11 +366,11 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Opens a desktop.
+    ''' デスクトップを開きます。
     ''' </summary>
-    ''' <param name="name">The name of the desktop to open.</param>
-    ''' <returns>True if the desktop was successfully opened.</returns>
-    Public Function Open(name As String) As Boolean
+    ''' <param name="name">開こうとするデスクトップの名前。</param>
+    ''' <returns>デスクトップを開くのに成功した時にTrueを返します。</returns>
+    Public Function Open(ByVal name As String) As Boolean
         ' make sure object isnt disposed.
         CheckDisposed()
 
@@ -381,9 +396,9 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Opens the current input desktop.
+    ''' 現在の入力デスクトップを開きます。
     ''' </summary>
-    ''' <returns>True if the desktop was succesfully opened.</returns>
+    ''' <returns>デスクトップを開くのに成功した時にTrueを返します。</returns>
     Public Function OpenInput() As Boolean
         ' make sure object isnt disposed.
         CheckDisposed()
@@ -405,15 +420,15 @@ Public Class Desktop
         End If
 
         ' get the desktop name.
-        m_desktopName = Desktop.GetDesktopName(m_desktop)
+        m_desktopName = desktop.GetDesktopName(m_desktop)
 
         Return True
     End Function
 
     ''' <summary>
-    ''' Switches input to the currently opened desktop.
+    ''' 入力を現在の開いているデスクトップに移します。
     ''' </summary>
-    ''' <returns>True if desktops were successfully switched.</returns>
+    ''' <returns>デスクトップの切り替えが成功した時にTrueを返します。</returns>
     Public Function Show() As Boolean
         ' make sure object isnt disposed.
         CheckDisposed()
@@ -430,10 +445,9 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Enumerates the windows on a desktop.
+    ''' デスクトップ上のウィンドウを列挙します。
     ''' </summary>
-    ''' <param name="windows">Array of Desktop.Window objects to recieve windows.</param>
-    ''' <returns>A window colleciton if successful, otherwise null.</returns>
+    ''' <returns>成功した時はウィンドウコレクションを、それ以外はNULLを返します。</returns>
     Public Function GetWindows() As WindowCollection
         ' make sure object isnt disposed.
         CheckDisposed()
@@ -470,7 +484,7 @@ Public Class Desktop
         Return windows
     End Function
 
-    Private Function DesktopWindowsProc(wndHandle As IntPtr, lParam As IntPtr) As Boolean
+    Private Function DesktopWindowsProc(ByVal wndHandle As IntPtr, ByVal lParam As IntPtr) As Boolean
         ' add window handle to colleciton.
         m_windows.Add(wndHandle)
 
@@ -478,11 +492,11 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Creates a new process in a desktop.
+    ''' デスクトップで新しいプロセスを作成して実行します。
     ''' </summary>
-    ''' <param name="path">Path to application.</param>
-    ''' <returns>The process object for the newly created process.</returns>
-    Public Function CreateProcess(path As String) As Process
+    ''' <param name="path">アプリケーションのパス。</param>
+    ''' <returns>新しく作成したプロセスのオブジェクトを返します。</returns>
+    Public Function CreateProcess(ByVal path As String) As Process
         ' make sure object isnt disposed.
         CheckDisposed()
 
@@ -499,8 +513,41 @@ Public Class Desktop
         Dim pi As New PROCESS_INFORMATION()
 
         ' start the process.
-        Dim result As Boolean = CreateProcess(Nothing, path, IntPtr.Zero, IntPtr.Zero, True, NORMAL_PRIORITY_CLASS,
-                IntPtr.Zero, Nothing, si, pi)
+        Dim result As Boolean = CreateProcess(Nothing, path, IntPtr.Zero, IntPtr.Zero, True, NORMAL_PRIORITY_CLASS, _
+         IntPtr.Zero, Nothing, si, pi)
+
+        ' error?
+        If Not result Then
+            Return Nothing
+        End If
+
+        ' Get the process.
+        ' 改造　プロセスを保持しておく
+        Dim p As Process = Process.GetProcessById(pi.dwProcessId)
+        _proc.Add(p)
+        Return p
+    End Function
+
+
+    Public Function xCreateProcess(ByVal path As String) As Process
+        ' make sure object isnt disposed.
+        CheckDisposed()
+
+        ' make sure a desktop is open.
+        If Not IsOpen Then
+            Return Nothing
+        End If
+
+        ' set startup parameters.
+        Dim si As New STARTUPINFO()
+        si.cb = Marshal.SizeOf(si)
+        si.lpDesktop = m_desktopName
+
+        Dim pi As New PROCESS_INFORMATION()
+
+        ' start the process.
+        Dim result As Boolean = CreateProcess(Nothing, path, IntPtr.Zero, IntPtr.Zero, True, NORMAL_PRIORITY_CLASS, _
+         IntPtr.Zero, Nothing, si, pi)
 
         ' error?
         If Not result Then
@@ -512,7 +559,7 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Prepares a desktop for use.  For use only on newly created desktops, call straight after CreateDesktop.
+    ''' 使用するデスクトップの準備をします。新しいデスクトップを作成したCreateDesktopの後で呼び出します。
     ''' </summary>
     Public Sub Prepare()
         ' make sure object isnt disposed.
@@ -522,16 +569,18 @@ Public Class Desktop
         If IsOpen Then
             ' load explorer.
             CreateProcess("explorer.exe")
+
         End If
+
     End Sub
+
 #End Region
 
 #Region "Static Methods"
     ''' <summary>
-    ''' Enumerates all of the desktops.
+    ''' 全てのデスクトップを列挙します。
     ''' </summary>
-    ''' <param name="desktops">String array to recieve desktop names.</param>
-    ''' <returns>True if desktop names were successfully enumerated.</returns>
+    ''' <returns>デスクトップの名前の列挙に成功した時にTrueを返します。</returns>
     Public Shared Function GetDesktops() As String()
         ' attempt to enum desktops.
         Dim windowStation As IntPtr = GetProcessWindowStation()
@@ -562,7 +611,7 @@ Public Class Desktop
         Return desktops
     End Function
 
-    Private Shared Function DesktopProc(lpszDesktop As String, lParam As IntPtr) As Boolean
+    Private Shared Function DesktopProc(ByVal lpszDesktop As String, ByVal lParam As IntPtr) As Boolean
         ' add the desktop to the collection.
         m_sc.Add(lpszDesktop)
 
@@ -570,45 +619,44 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Switches to the specified desktop.
+    ''' 明示されたデスクトップに切り替えます。
     ''' </summary>
-    ''' <param name="name">Name of desktop to switch input to.</param>
-    ''' <returns>True if desktops were successfully switched.</returns>
-    Public Shared Function Show(name As String) As Boolean
+    ''' <param name="name">切り替える入力デスクトップの名前。</param>
+    ''' <returns>切り替えが成功した時にTrueを返します。</returns>
+    Public Shared Function Show(ByVal name As String) As Boolean
         ' attmempt to open desktop.
         Dim result As Boolean = False
 
-        Using d As New Desktop()
-            result = d.Open(name)
+        Dim d As New Desktop()
+        result = d.Open(name)
 
-            ' something went wrong.
-            If Not result Then
-                Return False
-            End If
+        ' something went wrong.
+        If Not result Then
+            Return False
+        End If
 
-            ' attempt to switch desktops.
-            result = d.Show()
-        End Using
+        ' attempt to switch desktops.
+        result = d.Show()
 
         Return result
     End Function
 
     ''' <summary>
-    ''' Gets the desktop of the calling thread.
+    ''' スレッドに呼び出されているデスクトップを取得します。
     ''' </summary>
-    ''' <returns>Returns a Desktop object for the valling thread.</returns>
+    ''' <returns>スレッドの（valling?）Desktopオブジェクトを返します。</returns>
     Public Shared Function GetCurrent() As Desktop
         ' get the desktop.
         Return New Desktop(GetThreadDesktop(AppDomain.GetCurrentThreadId()))
     End Function
 
     ''' <summary>
-    ''' Sets the desktop of the calling thread.
+    ''' スレッドに呼び出されるデスクトップを設定します。
     ''' NOTE: Function will fail if thread has hooks or windows in the current desktop.
     ''' </summary>
-    ''' <param name="desktop">Desktop to put the thread in.</param>
-    ''' <returns>True if the threads desktop was successfully changed.</returns>
-    Public Shared Function SetCurrent(desktop As Desktop) As Boolean
+    ''' <param name="desktop">スレッドに関連付けるデスクトップ。</param>
+    ''' <returns>スレッドへの設定に成功した時にTrueを返します。</returns>
+    Public Shared Function SetCurrent(ByVal desktop As Desktop) As Boolean
         ' set threads desktop.
         If Not desktop.IsOpen Then
             Return False
@@ -618,11 +666,11 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Opens a desktop.
+    ''' デスクトップを開きます。
     ''' </summary>
-    ''' <param name="name">The name of the desktop to open.</param>
-    ''' <returns>If successful, a Desktop object, otherwise, null.</returns>
-    Public Shared Function OpenDesktop(name As String) As Desktop
+    ''' <param name="name">開こうとするデスクトップの名前。</param>
+    ''' <returns>成功ならそのデスクトップオブジェクトを、それ以外はNULLを返します。</returns>
+    Public Shared Function OpenDesktop(ByVal name As String) As Desktop
         ' open the desktop.
         Dim desktop As New Desktop()
         Dim result As Boolean = desktop.Open(name)
@@ -636,9 +684,9 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Opens the current input desktop.
+    ''' 現在の入力デスクトップを開きます。
     ''' </summary>
-    ''' <returns>If successful, a Desktop object, otherwise, null.</returns>
+    ''' <returns>成功した時はDesktopオブジェクトを、それ以外はNULLを返します。</returns>
     Public Shared Function OpenInputDesktop() As Desktop
         ' open the desktop.
         Dim desktop As New Desktop()
@@ -653,20 +701,20 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Opens the default desktop.
+    ''' デフォルトのデスクトップを開きます。
     ''' </summary>
-    ''' <returns>If successful, a Desktop object, otherwise, null.</returns>
+    ''' <returns>成功した時はDesktopオブジェクトを、それ以外はNULLを返します。</returns>
     Public Shared Function OpenDefaultDesktop() As Desktop
         ' opens the default desktop.
         Return Desktop.OpenDesktop("Default")
     End Function
 
     ''' <summary>
-    ''' Creates a new desktop.
+    ''' 新しいデスクトップを作成します。
     ''' </summary>
-    ''' <param name="name">The name of the desktop to create.  Names are case sensitive.</param>
-    ''' <returns>If successful, a Desktop object, otherwise, null.</returns>
-    Public Shared Function CreateDesktop(name As String) As Desktop
+    ''' <param name="name">新しいデスクトップの名前。大文字と小文字は区別されます。</param>
+    ''' <returns>成功の場合はDesktopオブジェクトを、それ以外はNULLを返します。</returns>
+    Public Shared Function CreateDesktop(ByVal name As String) As Desktop
         ' open the desktop.
         Dim desktop As New Desktop()
         Dim result As Boolean = desktop.Create(name)
@@ -680,11 +728,11 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Gets the name of a given desktop.
+    ''' 指定したデスクトップの名前を取得します。
     ''' </summary>
-    ''' <param name="desktop">Desktop object whos name is to be found.</param>
-    ''' <returns>If successful, the desktop name, otherwise, null.</returns>
-    Public Shared Function GetDesktopName(desktop As Desktop) As String
+    ''' <param name="desktop">Desktopオブジェクト。whos name is to be found.</param>
+    ''' <returns>成功の場合はデスクトップの名前を、それ以外はNULLを返します。</returns>
+    Public Shared Function GetDesktopName(ByVal desktop As Desktop) As String
         ' get name.
         If desktop.IsOpen Then
             Return Nothing
@@ -694,11 +742,11 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Gets the name of a desktop from a desktop handle.
+    ''' ハンドルからデスクトップの名前を取得します。
     ''' </summary>
     ''' <param name="desktopHandle"></param>
-    ''' <returns>If successful, the desktop name, otherwise, null.</returns>
-    Public Shared Function GetDesktopName(desktopHandle As IntPtr) As String
+    ''' <returns>成功した時はDesktopオブジェクトを、それ以外はNULLを返します。</returns>
+    Public Shared Function GetDesktopName(ByVal desktopHandle As IntPtr) As String
         ' check its not a null pointer.
         ' null pointers wont work.
         If desktopHandle = IntPtr.Zero Then
@@ -725,21 +773,21 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Checks if the specified desktop exists (using a case sensitive search).
+    ''' 明示されたデスクトップが存在するか確認します。（大文字と小文字を区別する検索を使用します。）
     ''' </summary>
-    ''' <param name="name">The name of the desktop.</param>
-    ''' <returns>True if the desktop exists, otherwise false.</returns>
-    Public Shared Function Exists(name As String) As Boolean
+    ''' <param name="name">デスクトップの名前。</param>
+    ''' <returns>指定されたデスクトップが存在する時はTrue、それ以外はFalseを返します。</returns>
+    Public Shared Function Exists(ByVal name As String) As Boolean
         Return Desktop.Exists(name, False)
     End Function
 
     ''' <summary>
-    ''' Checks if the specified desktop exists.
+    ''' 明示されたデスクトップが存在するか確認します。
     ''' </summary>
-    ''' <param name="name">The name of the desktop.</param>
-    ''' <param name="caseInsensitive">If the search is case INsensitive.</param>
-    ''' <returns>True if the desktop exists, otherwise false.</returns>
-    Public Shared Function Exists(name As String, caseInsensitive As Boolean) As Boolean
+    ''' <param name="name">デスクトップの名前。</param>
+    ''' <param name="caseInsensitive">大文字と小文字を区別しない検索を使用する時はTrueにします。</param>
+    ''' <returns>指定されたデスクトップが存在する時はTrue、それ以外はFalseを返します。</returns>
+    Public Shared Function Exists(ByVal name As String, ByVal caseInsensitive As Boolean) As Boolean
         ' enumerate desktops.
         Dim desktops As String() = Desktop.GetDesktops()
 
@@ -761,12 +809,12 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Creates a new process on the specified desktop.
+    ''' 明示されたデスクトップに新しいプロセスを作成します。
     ''' </summary>
-    ''' <param name="path">Path to application.</param>
-    ''' <param name="desktop">Desktop name.</param>
-    ''' <returns>A Process object for the newly created process, otherwise, null.</returns>
-    Public Shared Function CreateProcess(path As String, desktop__1 As String) As Process
+    ''' <param name="path">アプリケーションのパス。</param>
+    ''' <param name="desktop__1">デスクトップの名前。</param>
+    ''' <returns>新しく作成された時はプロセスのオブジェクトを、それ以外はNULLを返します。</returns>
+    Public Shared Function CreateProcess(ByVal path As String, ByVal desktop__1 As String) As Process
         If Not Desktop.Exists(desktop__1) Then
             Return Nothing
         End If
@@ -777,9 +825,9 @@ Public Class Desktop
     End Function
 
     ''' <summary>
-    ''' Gets an array of all the processes running on the Input desktop.
+    ''' 入力デスクトップで実行中の全てのプロセスを配列として取得します。
     ''' </summary>
-    ''' <returns>An array of the processes.</returns>
+    ''' <returns>プロセスが格納された配列を返します。</returns>
     Public Shared Function GetInputProcesses() As Process()
         ' get all processes.
         Dim processes As Process() = Process.GetProcesses()
@@ -817,6 +865,12 @@ Public Class Desktop
     ''' <summary>
     ''' Dispose Object.
     ''' </summary>
+    Public Interface IDisposable
+
+    End Interface
+    Public Interface ICloneable
+
+    End Interface
     Public Sub Dispose()
         ' dispose
         Dispose(True)
@@ -824,12 +878,11 @@ Public Class Desktop
         ' suppress finalisation
         GC.SuppressFinalize(Me)
     End Sub
-
     ''' <summary>
-    ''' Dispose Object.
+    ''' オブジェクトを配置します。
     ''' </summary>
     ''' <param name="disposing">True to dispose managed resources.</param>
-    Public Overridable Sub Dispose(disposing As Boolean)
+    Public Overridable Sub Dispose(ByVal disposing As Boolean)
         If Not m_disposed Then
             ' dispose of managed resources,
             ' close handles
@@ -850,9 +903,9 @@ Public Class Desktop
 
 #Region "ICloneable"
     ''' <summary>
-    ''' Creates a new Desktop object with the same desktop open.
+    ''' 開かれているデスクトップと同じDesktopオブジェクトを作成します。
     ''' </summary>
-    ''' <returns>Cloned desktop object.</returns>
+    ''' <returns>Desktopオブジェクトのクローンを返します。</returns>
     Public Function Clone() As Object
         ' make sure object isnt disposed.
         CheckDisposed()
@@ -870,25 +923,18 @@ Public Class Desktop
 
 #Region "Overrides"
     ''' <summary>
-    ''' Gets the desktop name.
+    ''' デスクトップの名前を取得します。
     ''' </summary>
-    ''' <returns>The desktop name, or a blank string if no desktop open.</returns>
+    ''' <returns>デスクトップが開かれていない時は空白を、それ以外はデスクトップの名前を返します。</returns>
     Public Overrides Function ToString() As String
         ' return the desktop name.
         Return m_desktopName
     End Function
-    Private Shared Function InlineAssignHelper(Of T)(ByRef target As T, value As T) As T
+    Private Shared Function InlineAssignHelper(Of T)(ByRef target As T, ByVal value As T) As T
         target = value
         Return value
     End Function
-
-    Private Sub IDisposable_Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
-    End Sub
-
-    Private Function ICloneable_Clone() As Object Implements ICloneable.Clone
-        Throw New NotImplementedException()
-    End Function
-
 #End Region
+
+
 End Class
